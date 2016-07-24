@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UI Demo</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="https://static.jstree.com/3.3.1/assets/dist/jstree.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            margin: 0px;
+            overflow: hidden;
+            padding: 0px;
+        }
+
+        #navigation {
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #home {
+            height: 100%;
+            padding: 0px;
+            position: relative;
+            width: inherit;
+        }
+
+        #home-tree, #home-table {
+            height: 100%;
+            width: inherit;
+        }
+
+        .tree-wrapper {
+            border-right: 1px solid black;
+            height: 100%;
+            width: 25%;
+        }
+
+        .table-wrapper {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            width: 74%;
+        }
+
+        .resizable {
+            display: inline-block;
+        }
+
+        .ui-resizable-e {
+            background-color: lightgray;
+            bottom: 0;
+            cursor: e-resize;
+            right: 0px;
+            top: 0;
+            width: 5px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            height: 25px;
+        }
+
+        .search-form {
+            box-sizing: border-box;
+            background: gray;
+            padding: 3px 5px;
+            position: relative;
+            height: 48px;
+            width: inherit;
+        }
+
+        .search-input-wrapper {
+            padding-right: 140px;
+        }
+
+        .search-form input[type=search] {
+            height: 40px;
+            width: 100%;
+        }
+
+        .search-form button {
+            background: white;
+            color: black;
+            margin-left: 10px;
+            position: absolute;
+            top: 4px;
+            right: 5px;
+            height: 40px;
+            width: 130px;
+        }
+
+    </style>
+    <script>
+    $(function() {
+        $('#navigation').tabs({
+            heightStyle: 'fill',
+            create: function (event, ui) {
+                if (!window.location.hash) {
+                    window.location.hash = '#home';
+                }
+            },
+            activate: function (event, ui) {
+                window.location.hash = ui.newPanel.selector;
+            }
+        });
+
+        $(window).bind('hashchange', function(event) {
+            var index = $('#navigation a[href="' + window.location.hash + '"]').parent().index();
+            if (index < 0) {
+                index = 0;
+            }
+            $('#navigation').tabs({'active': index});
+        });
+
+        function resize() {
+            var treeWrapper = $('.tree-wrapper'),
+                remainingSpace = treeWrapper.parent().width() - treeWrapper.outerWidth() - 1,
+                tableWrapper = $('.table-wrapper'),
+                tableWrapperWidth = remainingSpace - (tableWrapper.outerWidth() - tableWrapper.width()) + 'px';
+
+            tableWrapper.width(tableWrapperWidth);
+        }
+
+        $('.tree-wrapper').resizable({
+            autoHide: true,
+            handles: 'e',
+            minWidth: '250',
+            maxWidth: '600',
+            resize: function (e, ui) {
+                resize();
+            },
+            stop: function(e, ui) {
+                var parent = ui.element.parent();
+                ui.element.css({
+                    width: ui.element.width() + 'px'
+                });
+            }
+        });
+
+        resize();
+
+        var treeWrapper = $('.tree-wrapper'),
+            remainingSpace = treeWrapper.parent().width() - treeWrapper.outerWidth() - 1,
+            tableWrapper = $('.table-wrapper'),
+            tableWrapperWidth = remainingSpace - (tableWrapper.outerWidth() - tableWrapper.width()) + 'px';
+
+        tableWrapper.width(tableWrapperWidth);
+
+        $('#home-tree').jstree({
+            'core' : {
+                'data' : [
+                    {
+                        'text': 'All Documents',
+                        'children': [
+                            'Document A',
+                            'Document B',
+                        ],
+                    },
+                    {
+                        'text' : 'My Assignments',
+                        'children' : [
+                            {
+                                'text' : 'Batch 1',
+                                'children': [
+                                    {
+                                        'text': 'Reviewed (2)',
+                                        'children': [
+                                            'item 1',
+                                            'item 2',
+                                        ],
+                                    }, {
+                                        'text': 'Not Reviewed (2)',
+                                        'children': [
+                                            'item 3',
+                                            'item 4',
+                                        ],
+                                    },
+                                ],
+                            }, {
+                                'text' : 'Batch 1',
+                                'children': [
+                                    {
+                                        'text': 'Reviewed (2)',
+                                        'children': [
+                                            'item 1',
+                                            'item 2',
+                                        ],
+                                    }, {
+                                        'text': 'Not Reviewed (2)',
+                                        'children': [
+                                            'item 3',
+                                            'item 4',
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        });
+    });
+    </script>
+</head>
+<body>
+
+<div id="navigation">
+    <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#review">Review</a></li>
+        <li><a href="#admin">Admin</a></li>
+    </ul>
+
+    <div id="home">
+        <div class="tree-wrapper resizable"><div id="home-tree"></div></div>
+        <div class="table-wrapper resizable">
+                <form class="search-form">
+                    <div class="search-input-wrapper">
+                        <input type="search">
+                    </div>
+                    <button type="submit">Search</button>
+                </form>
+                <table id="home-table">
+                <thead>
+                    <tr>
+                        <th>Start Numer</th>
+                        <th>End Number</th>
+                        <th>Title</th>
+                        <th>Custodian</th>
+                        <th>File Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SOAW001</td>
+                        <td>SOAW002</td>
+                        <td>File 1</td>
+                        <td>Terry</td>
+                        <td>Microsoft Word</td>
+                    </tr>
+                    <tr>
+                        <td>SOAW002</td>
+                        <td>SOAW003</td>
+                        <td>File 2</td>
+                        <td>Leo</td>
+                        <td>PDF</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="review"></div>
+    <div id="admin"></div>
+</div>
+
+</body>
+</html>
